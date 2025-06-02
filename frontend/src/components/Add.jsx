@@ -15,6 +15,7 @@ const AddBlog = () => {
 
     if (!title || !author || !content) {
       setError('All fields are required.')
+      setMessage('')
       return
     }
 
@@ -29,42 +30,57 @@ const AddBlog = () => {
     } catch (err) {
       console.error(err)
       setError('Failed to add blog. Make sure the backend is running.')
+      setMessage('')
     }
   }
 
   return (
-    <div>
-      <h2>Add a Blog</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: 400 }}>
-        <label>Title:</label>
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold text-center mb-6 text-blue-700">Add a Blog</h2>
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+        <label className="font-semibold text-gray-700">Title:</label>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Enter blog title"
+          className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
 
-        <label>Author:</label>
+        <label className="font-semibold text-gray-700">Author:</label>
         <input
           type="text"
           value={author}
           onChange={(e) => setAuthor(e.target.value)}
           placeholder="Enter author name"
+          className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
         
-        <label>Content:</label>
+        <label className="font-semibold text-gray-700">Content:</label>
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Enter blog content"
           rows="5"
+          className="border border-gray-300 rounded-md p-2 resize-y focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
         
-        <button type="submit" style={{ marginTop: '10px' }}>Add Blog</button>
+        <button
+          type="submit"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition-colors duration-300"
+        >
+          Add Blog
+        </button>
       </form>
 
-      {message && <p style={{ color: 'green' }}>{message}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {message && (
+        <p className="mt-4 text-green-600 font-medium text-center">{message}</p>
+      )}
+      {error && (
+        <p className="mt-4 text-red-600 font-medium text-center">{error}</p>
+      )}
     </div>
   )
 }
+
+export default AddBlog
