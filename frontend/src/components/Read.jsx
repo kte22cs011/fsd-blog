@@ -1,36 +1,66 @@
-import React from 'react'
-import { useEffect } from 'react'
-import { useState } from 'react'
-import axios from 'axios'
-
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const Read = () => {
-    const [data,setData]=useState([])
-    const [error,setError]=useState(null)
+    // State management
+    const [blogs, setBlogs] = useState([]);
+    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
     
-    const baseUrl=import.meta.env.VITE_API_BASE_URL
-    console.log(baseUrl)
-    useEffect(()=>{
-        const fetchData=async()=>{
+    // Environment configuration
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+    // Data fetching effect
+    useEffect(() => {
+        const fetchBlogs = async () => {
             try {
-                const response = await axios.get(baseUrl) // fixed template literal error
-                console.log(response.data)
+                setIsLoading(true);
+                const response = await axios.get(baseUrl);
                 
                 if (response.status !== 200) {
-                    throw new Error('Failed to fetch blogs')
+                    throw new Error('Failed to fetch blogs');
                 }
-                setData(response.data)
-            } catch (error) {
-                setError(error.message || "Server interaction failed")
+                
+                setBlogs(response.data);
+            } catch (err) {
+                setError(err.message || "Server interaction failed");
+                console.error('Fetch error:', err);
+            } finally {
+                setIsLoading(false);
             }
-        }
-        fetchData()
-    },[])
+        };
 
-    if(error) return <p>Error: {error}</p>
+        fetchBlogs();
+    }, [baseUrl]);
+
+    // Render states
+    if (isLoading) return <div className="loading">Loading blogs...</div>;
+    if (error) return <div className="error">Error: {error}</div>;
+    if (blogs.length === 0) return <div className="empty">No blogs available</div>;
+
     return (
-        <div>Read Blogs</div>
-    )
-}
+        <div className="blog-container">
+            <header className="blog-header">
+                <h1>Blog Posts</h1>
+                <p>Explore our latest articles</p>
+            </header>
 
-export default Read
+            <section className="blog-list">
+                {blogs.map(blog => (
+                    <article key={blog._id} className="blog-card">
+                        <h2 className="blog-title">{blog.title}</h2>
+                        <p className="blog-author">By {blog.author}</p>
+                        <div className="blog-content">
+                            {blog.content}
+                        </div>
+                        <footer className="blog-meta">
+                            {/* Add date or other metadata here if available */}
+                        </footer>
+                    </article>
+                ))}
+            </section>
+        </div>
+    );
+};
+
+export default Read;
